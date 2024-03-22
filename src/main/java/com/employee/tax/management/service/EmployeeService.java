@@ -5,12 +5,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.employee.tax.management.dto.EmployeeDTO;
 import com.employee.tax.management.dto.TaxDeductionDTO;
 import com.employee.tax.management.entity.Employee;
 import com.employee.tax.management.repository.EmployeeRepository;
@@ -52,11 +52,18 @@ public class EmployeeService {
 	        taxDeduction.setEmployeeId(employee.getEmployeeId());
 	        taxDeduction.setFirstName(employee.getFirstName());
 	        taxDeduction.setLastName(employee.getLastName());
-	        taxDeduction.setYearlySalary(employee.getYearlySalary());
+	        taxDeduction.setSalary(employee.getMonthlySalary());
+	        
+	        LocalDate currentDate = LocalDate.now();
+	        int currentYear = currentDate.getYear();
+	        
+	        Map<Integer, BigDecimal> salaryPerYear  =  calculateMonthsSalaryPerYear();
 
-	        BigDecimal yearlySalary = employee.getYearlySalary();
+	        BigDecimal monthlySalary = employee.getMonthlySalary();
 	        BigDecimal taxAmount = BigDecimal.ZERO;
 	        BigDecimal cessAmount = BigDecimal.ZERO;
+	        
+	        BigDecimal yearlySalary = salaryPerYear.get(currentYear);
 
 	        if (yearlySalary.compareTo(BigDecimal.valueOf(250000)) > 0) {
 	            if (yearlySalary.compareTo(BigDecimal.valueOf(500000)) <= 0) {
@@ -76,6 +83,32 @@ public class EmployeeService {
 	        taxDeduction.setCessAmount(cessAmount);
 
 	        return taxDeduction;
+	    }
+	    
+	    
+	    public Map<Integer, BigDecimal> calculateMonthsSalaryPerYear() {
+	       // List<Employee> employees = employeeRepository.findAll();
+	        
+	        // Group employees by year and sum salary for each year
+	        Map<Integer, BigDecimal> salaryPerYear = employees.stream()
+	                .collect(Collectors.groupingBy(
+	                        e -> e.getDoj().getYear(),
+	                        Collectors.mapping(Employee::getMonthlySalary, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
+	                ));
+
+	        // Calculate months of salary drawn for each year
+	        LocalDate currentDate = LocalDate.now();
+	        int currentYear = currentDate.getYear();
+	        int currentMonth = currentDate.getMonthValue();
+
+	        for (int year = 2000; year <= currentYear; year++) {
+	            BigDecimal totalSalary = salaryPerYear.getOrDefault(year, BigDecimal.ZERO);
+	            int monthsWorked = (year == currentYear) ? currentMonth : 12;
+	            BigDecimal monthsSalary = totalSalary.divide(BigDecimal.valueOf(12), 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(monthsWorked));
+	            salaryPerYear.put(year, monthsSalary);
+	        }
+
+	        return salaryPerYear;
 	    }
 	    
 }
