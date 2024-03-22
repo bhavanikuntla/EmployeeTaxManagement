@@ -2,6 +2,7 @@ package com.employee.tax.management.dto;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.constraints.Email;
@@ -34,7 +35,7 @@ public class TaxDeductionDTO {
 
 	    @NotNull(message = "DOJ is mandatory")
 	    @Past(message = "DOJ must be in the past")
-	    private Date doj;
+	    private LocalDate doj;
 
 	    @NotNull(message = "Salary is mandatory")
 	    @Positive(message = "Salary must be positive")
@@ -110,11 +111,11 @@ public class TaxDeductionDTO {
 			this.phoneNumbers = phoneNumbers;
 		}
 
-		public Date getDoj() {
+		public LocalDate getDoj() {
 			return doj;
 		}
 
-		public void setDoj(Date doj) {
+		public void setDoj(LocalDate doj) {
 			this.doj = doj;
 		}
 

@@ -75,6 +75,18 @@ public class Employee {
 	  
 		
 		
+		public String getEmail() {
+			return email;
+		}
+		public void setEmail(String email) {
+			this.email = email;
+		}
+		public List<String> getPhoneNumbers() {
+			return phoneNumbers;
+		}
+		public void setPhoneNumbers(List<String> phoneNumbers) {
+			this.phoneNumbers = phoneNumbers;
+		}
 		public Employee(String employeeId, String firstName, String lastName, String email, List<String> phoneNumbers, LocalDate doj, BigDecimal monthlySalary) {
 			 this.employeeId = employeeId;
 			 this.firstName =  firstName;

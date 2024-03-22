@@ -52,7 +52,10 @@ public class EmployeeService {
 	        taxDeduction.setEmployeeId(employee.getEmployeeId());
 	        taxDeduction.setFirstName(employee.getFirstName());
 	        taxDeduction.setLastName(employee.getLastName());
+	        taxDeduction.setEmail(employee.getEmail());
 	        taxDeduction.setSalary(employee.getMonthlySalary());
+	        taxDeduction.setDoj(employee.getDoj());
+	        taxDeduction.setPhoneNumbers(employee.getPhoneNumbers());
 	        
 	        LocalDate currentDate = LocalDate.now();
 	        int currentYear = currentDate.getYear();
